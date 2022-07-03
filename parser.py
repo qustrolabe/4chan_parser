@@ -64,7 +64,7 @@ def archive_list(thread_ids, board):
     if output:
         out = json.loads(output)
         for thread in out:
-            thread_ids.append(thread_ids, thread)
+            thread_ids.append(thread)
 
 def download_threads(board, threads):
     count = 0
