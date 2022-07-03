@@ -17,7 +17,9 @@ def open_url(url):
     try:
         response = urllib2.urlopen(url)
     except:
-        raise
+        # raise
+        print("Error opening url: "+ url)
+        return None
     else:
         output = response.read().decode('utf-8');
         return output
