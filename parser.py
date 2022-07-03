@@ -18,6 +18,8 @@ def dl_image(image_url, filepath):
 def open_url(url):
     try:
         response = urllib2.urlopen(url)
+    except KeyboardInterrupt:
+        raise
     except:
         # raise
         print("Error opening url: "+ url)
