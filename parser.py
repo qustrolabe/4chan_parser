@@ -8,6 +8,8 @@ import requests
 import urllib.request as urllib2
 from optparse import OptionParser
 
+import concurrent.futures
+
 def dl_image(image_url, filepath):
     img_data = requests.get(image_url).content
     with open(filepath, 'wb') as handler:
@@ -35,19 +37,22 @@ def download_thread(board,thread):
     output = open_url(url)
     if output:
         out = json.loads(output)
+        tasks = []
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            for post in out['posts']:
+                try:
+                    tim = str(post['tim'])
+                    ext = str(post['ext'])
+                except KeyError:
+                    continue
 
-        for post in out['posts']:
-            try:
-                tim = str(post['tim'])
-                ext = str(post['ext'])
-            except KeyError:
-                continue
-            image_url = 'http://i.4cdn.org/' + board+'/' + tim + ext
-            
-            filepath = dl_dir + thread + '/' + tim+ext
-            if not os.path.isfile(filepath):
-                print("\t" + tim + ext)
-                dl_image(image_url, filepath)
+                image_url = 'http://i.4cdn.org/' + board+'/' + tim + ext
+                filepath = dl_dir + thread + '/' + tim + ext
+
+                if not os.path.isfile(filepath):
+                    print("\t" + tim + ext)
+                    tasks.append( executor.submit(dl_image, image_url, filepath) )
+        concurrent.futures.wait(tasks)
 
 def catalog_list(thread_ids, board):
     # Parse catalog thread ids
@@ -73,7 +78,7 @@ def download_threads(board, threads):
     size = len(threads)
     for thread in threads:
         print("[%d/%d]" % (count, size), end=" ") 
-        download_thread(board, str(thread) )
+        download_thread(board, str(thread))
         count = count + 1
 
 def main(argv):
