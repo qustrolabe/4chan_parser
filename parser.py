@@ -40,7 +40,7 @@ def download_thread(board,thread):
     if output:
         out = json.loads(output)
         tasks = []
-        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        with concurrent.futures.ThreadPoolExecutor() as executor:
             for post in out['posts']:
                 try:
                     tim = str(post['tim'])
