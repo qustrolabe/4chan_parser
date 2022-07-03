@@ -28,7 +28,7 @@ def open_url(url):
 def download_thread(board,thread):
     print("Parsing thread: " + thread) 
 
-    dl_dir = 'download_dir/'
+    dl_dir = 'download_dir/' + board + '/'
     os.makedirs(dl_dir + thread, exist_ok=True)
 
     url = 'http://a.4cdn.org/'+board+'/thread/'+thread+'.json'
