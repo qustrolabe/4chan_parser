@@ -32,7 +32,7 @@ def open_url(url):
         return output
     return None
 
-def download_thread(board,thread):
+def download_thread(board,thread, preview=False):
     print("Parsing thread: " + thread) 
 
     dl_dir = 'download_dir/' + board + '/'
@@ -51,13 +51,22 @@ def download_thread(board,thread):
                 except KeyError:
                     continue
 
-                image_url = 'http://i.4cdn.org/' + board+'/' + tim + ext
-                filepath = dl_dir + thread + '/' + tim + ext
+
+                dir_path = dl_dir + thread + '/'
+                if not preview:
+                    image_url = 'http://i.4cdn.org/' + board+'/' + tim + ext
+                    filename = tim + ext
+                else:
+                    image_url = 'http://i.4cdn.org/' + board+'/' + tim + 's.jpg'
+                    filename = tim + 's.jpg'
+
+                filepath = dir_path + filename
 
                 if not os.path.isfile(filepath):
-                    print("\t" + tim + ext)
+                    print(filename, end=" ")
                     tasks.append( executor.submit(dl_image, image_url, filepath) )
         concurrent.futures.wait(tasks)
+        print()
 
 def catalog_list(thread_ids, board):
     # Parse catalog thread ids
@@ -78,12 +87,12 @@ def archive_list(thread_ids, board):
         for thread in out:
             thread_ids.append(thread)
 
-def download_threads(board, threads):
+def download_threads(board, threads, preview=False):
     count = 0
     size = len(threads)
     for thread in threads:
         print("[%d/%d]" % (count, size), end=" ") 
-        download_thread(board, str(thread))
+        download_thread(board, str(thread), preview)
         count = count + 1
 
 def main(argv):
@@ -96,10 +105,14 @@ def main(argv):
                       action="store_true", dest="archive", default=False,
                       help="Parse also board's archive")
 
+    parser.add_option("-p", "--preview",
+                      action="store_true", dest="preview", default=False,
+                      help="Download thumbnails (low-quality preview images *s.jpg)")
+
     (options, args) = parser.parse_args()
     if options.board:
         if options.thread:
-            download_thread(options.board,options.thread)
+            download_thread(options.board,options.thread, options.preview)
         else:
             thread_ids = []
             catalog_list(thread_ids, options.board)
@@ -108,7 +121,7 @@ def main(argv):
 
             print(thread_ids)
             
-            download_threads(options.board, thread_ids)
+            download_threads(options.board, thread_ids, options.preview)
     else:
         parser.print_help()
 
