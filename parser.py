@@ -11,7 +11,10 @@ from optparse import OptionParser
 import concurrent.futures
 
 def dl_image(image_url, filepath):
-    img_data = requests.get(image_url).content
+    try:
+        img_data = requests.get(image_url).content
+    except:
+        print("Error downloading file " + image_url)
     with open(filepath, 'wb') as handler:
         handler.write(img_data)
 
