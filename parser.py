@@ -90,10 +90,17 @@ def archive_list(thread_ids, board):
 def download_threads(board, threads, preview=False):
     count = 0
     size = len(threads)
-    for thread in threads:
-        print("[%d/%d]" % (count, size), end=" ") 
-        download_thread(board, str(thread), preview)
-        count = count + 1
+
+    tasks = []
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        for thread in threads:
+            print("[%d/%d]" % (count, size), end=" ") 
+
+            tasks.append( executor.submit(download_thread, board, str(thread), preview) )
+
+            count = count + 1
+
+    concurrent.futures.wait(tasks)
 
 def main(argv):
     parser = OptionParser()
