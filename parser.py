@@ -58,7 +58,7 @@ def download_thread(board,thread, preview=False):
                     filename = tim + ext
                 else:
                     image_url = 'http://i.4cdn.org/' + board+'/' + tim + 's.jpg'
-                    filename = tim + 's.jpg'
+                    filename = tim + 's'+ ext +'.jpg'
 
                 filepath = dir_path + filename
 
