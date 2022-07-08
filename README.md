@@ -14,5 +14,10 @@ Parse whole board
 
 Parse whole board + archive
 ```bash
-./parser.py -b pol -a 
-````
+./parser.py -b pol -a
+```
+
+Parse whole board downloading only preview thumbnails
+```bash
+./parser.py -b pol -p
+```
