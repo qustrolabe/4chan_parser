@@ -32,8 +32,11 @@ def open_url(url):
         return output
     return None
 
-def download_thread(board,thread, preview=False):
-    print("Parsing thread: " + thread) 
+def download_thread(board,thread, preview=False, counter=None):
+    if counter is not None:
+        print(counter, end=" ")
+
+    print("Parsing thread: " + thread)
 
     dl_dir = 'download_dir/' + board + '/'
     os.makedirs(dl_dir + thread, exist_ok=True)
@@ -94,9 +97,7 @@ def download_threads(board, threads, preview=False):
     tasks = []
     with concurrent.futures.ThreadPoolExecutor() as executor:
         for thread in threads:
-            print("[%d/%d]" % (count, size), end=" ") 
-
-            tasks.append( executor.submit(download_thread, board, str(thread), preview) )
+            tasks.append( executor.submit(download_thread, board, str(thread), preview,counter =( "[%d/%d]" % (count, size) )) )
 
             count = count + 1
 
