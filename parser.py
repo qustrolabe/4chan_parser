@@ -91,7 +91,7 @@ def archive_list(thread_ids, board):
             thread_ids.append(thread)
 
 def download_threads(board, threads, preview=False):
-    count = 0
+    count = 1
     size = len(threads)
 
     tasks = []
